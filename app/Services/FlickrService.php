@@ -18,17 +18,21 @@ class FlickrService
 
     /**
      * Consumes the Flickr API to fetch photos.
+     *
+     * @param  string[]|null  $tags
      */
-    public function fetchFeed($tags = null, $page = 1, $perPage = 10)
+    public function fetchFeed(int $page = 1, int $perPage = 10, ?array $tags = null)
     {
-        $method = $tags ? 'flickr.photos.search' : 'flickr.photos.getRecent';
+        $preparedTags = $tags ? implode(',', $tags) : null;
+
+        $method = $preparedTags ? 'flickr.photos.search' : 'flickr.photos.getRecent';
         $params = [
             'method' => $method,
             'api_key' => $this->apiKey,
             'format' => 'json',
             'nojsoncallback' => 1,
             'extras' => 'url_m,date_taken',
-            'tags' => $tags,
+            'tags' => $preparedTags,
             'page' => $page,
             'per_page' => $perPage,
         ];
