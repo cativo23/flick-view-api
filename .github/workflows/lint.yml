@@ -10,6 +10,10 @@ jobs:
       matrix:
         php: [8.3]
 
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
