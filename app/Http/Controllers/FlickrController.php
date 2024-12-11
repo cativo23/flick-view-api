@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Cache;
 use App\Services\FlickrService;
 use Illuminate\Http\Request;
 
@@ -22,15 +21,16 @@ class FlickrController extends Controller
         $tags = $request->query('tags', null);      // Tags opcionales
 
         // Intentar recuperar datos del caché
-        $cacheKey = "flickr_feed_page_{$page}_perPage_{$perPage}_tags_" . ($tags ?: 'none');
+        $cacheKey = "flickr_feed_page_{$page}_perPage_{$perPage}_tags_".($tags ?: 'none');
 
         $feed = $this->flickrService->fetchFeed($tags, $page, $perPage);
 
-        if($feed === null) {
+        if ($feed === null) {
             return response()->json([
-                'message' => 'Error al obtener el feed de Flickr.'
+                'message' => 'Error al obtener el feed de Flickr.',
             ], 500);
         }
+
         return response()->json([
             'status' => 'success',
             'data' => $feed['photos']['photo'] ?? [],

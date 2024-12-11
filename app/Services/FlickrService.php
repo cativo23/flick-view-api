@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 class FlickrService
 {
     protected $apiUrl;
+
     protected $apiKey;
 
     public function __construct()
@@ -35,7 +36,6 @@ class FlickrService
         $response = Http::get($this->apiUrl, $params);
 
         $status = $response->json('stat');
-
 
         if ($status === 'fail') {
             return null;
