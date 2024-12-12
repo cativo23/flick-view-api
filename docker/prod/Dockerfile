@@ -46,11 +46,7 @@ RUN chown -R www-data:www-data /var/www/html \
 USER www-data
 
 # Optimize Laravel for production
-RUN composer install --no-dev --optimize-autoloader \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan event:cache
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 USER root
 
@@ -60,11 +56,15 @@ COPY docker/prod/default.conf /etc/nginx/sites-enabled/default
 # Copy Supervisor configuration
 COPY docker/prod/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Copy start.sh script
+COPY docker/prod/start-container.sh /usr/local/bin/start-container.sh
+RUN chmod +x /usr/local/bin/start-container.sh
+
 # Set permissions for runtime directories (as root)
 RUN chown -R www-data:www-data /var/www/html
 
 # Expose port 80 for Nginx
 EXPOSE 80
 
-# Start Supervisor, which will manage Nginx and PHP-FPM
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Set the entry point to the start.sh script
+CMD ["/usr/local/bin/start-container.sh"]
