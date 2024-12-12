@@ -12,8 +12,8 @@ class FlickrService
 
     public function __construct()
     {
-        $this->apiUrl = config('services.flickr.url', env('FLICKR_API_URL'));
-        $this->apiKey = config('services.flickr.key', env('FLICKR_API_KEY'));
+        $this->apiUrl = config('services.flickr.url');
+        $this->apiKey = config('services.flickr.key');
     }
 
     /**
