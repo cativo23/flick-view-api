@@ -2,35 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Cache;
 use App\Services\FlickrService;
+use App\Services\MetricsService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class FlickrController extends Controller
 {
-    protected $flickrService;
+    public function __construct(
+        protected readonly FlickrService $flickrService,
+        protected readonly MetricsService $metricsService
+    ) {}
 
-    public function __construct(FlickrService $flickrService)
-    {
-        $this->flickrService = $flickrService;
-    }
-
-    public function getFeed(Request $request)
+    public function getFeed(Request $request): JsonResponse
     {
         $page = $request->query('page', 1);          // Página actual (por defecto 1)
         $perPage = $request->query('per_page', 10); // Elementos por página (por defecto 10)
-        $tags = $request->query('tags', null);      // Tags opcionales
+        $dirtyTags = $request->query('tags', '');      // Tags opcionales
+
+        // Clean up tags
+        $tags = $this->cleanTags($dirtyTags);
+
+        // Save the searched tags to the database
+        $this->saveSearchedTags($tags);
 
         // Intentar recuperar datos del caché
-        $cacheKey = "flickr_feed_page_{$page}_perPage_{$perPage}_tags_" . ($tags ?: 'none');
+        $tagsHash = $tags ? md5(implode(',', $tags)) : 'none';
+        $cacheKey = "flickr_feed_page_{$page}_perPage_{$perPage}_tags_{$tagsHash}";
 
-        $feed = $this->flickrService->fetchFeed($tags, $page, $perPage);
+        $feed = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($tags, $page, $perPage) {
+            return $this->flickrService->fetchFeed($page, $perPage, $tags);
+        });
 
-        if($feed === null) {
+        if ($feed === null) {
             return response()->json([
-                'message' => 'Error al obtener el feed de Flickr.'
+                'message' => 'Error al obtener el feed de Flickr.',
             ], 500);
         }
+
         return response()->json([
             'status' => 'success',
             'data' => $feed['photos']['photo'] ?? [],
@@ -42,5 +52,33 @@ class FlickrController extends Controller
             ],
             'last_updated' => now()->toDateTimeString(),
         ]);
+    }
+
+    /**
+     * Clean up the tags from the query parameter and return an array of tags
+     */
+    private function cleanTags(string $dirtyTags): array
+    {
+        // Get the tags from the query parameter and split them into an array
+        $tags = explode(',', $dirtyTags);
+
+        // Clean up the tags: remove empty entries, trim spaces
+        $tags = array_filter(array_map('trim', $tags));
+
+        $tags = array_unique($tags);
+
+        return array_filter($tags, static function ($tag) {
+            return $tag !== '' && strlen($tag) <= 50; // Example: max length of 50
+        });
+    }
+
+    /**
+     * Save the searched tags to the database
+     *
+     * @param  string[]  $tags
+     */
+    private function saveSearchedTags(array $tags): void
+    {
+        $this->metricsService->saveSearchTags($tags);
     }
 }

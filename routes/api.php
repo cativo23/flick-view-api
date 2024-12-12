@@ -1,11 +1,12 @@
 <?php
 
+use App\Http\Controllers\FlickrController;
+use App\Http\Middleware\Metrics\LogResponseTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FlickrController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/feed', [FlickrController::class, 'getFeed']);
+Route::get('/feed', [FlickrController::class, 'getFeed'])->middleware([LogResponseTime::class]);

@@ -21,12 +21,21 @@ return new class extends Migration
     {
         $schema = Schema::connection($this->getConnection());
 
-        $schema->create('telescope_entries', function (Blueprint $table) {
+        $driver = $schema->getConnection()->getDriverName();
+
+        $schema->create('telescope_entries', function (Blueprint $table) use ($driver) {
             $table->bigIncrements('sequence');
             $table->uuid('uuid');
             $table->uuid('batch_id');
             $table->string('family_hash')->nullable();
-            $table->boolean('should_display_on_index')->default(true);
+            // Verify if the driver is PostgreSQL
+            if ($driver === 'pgsql') {
+                // Use integer in PostgreSQL
+                $table->integer('should_display_on_index')->default(1);  // 1 = true, 0 = false
+            } else {
+                // Use boolean in other drivers
+                $table->boolean('should_display_on_index')->default(true);
+            }
             $table->string('type', 20);
             $table->longText('content');
             $table->dateTime('created_at')->nullable();

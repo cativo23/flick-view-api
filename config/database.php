@@ -95,6 +95,9 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => 'prefer',
+            'options' => [
+                PDO::ATTR_EMULATE_PREPARES => true, // Disable prepared statements
+            ],
         ],
 
         'sqlsrv' => [
@@ -151,21 +154,25 @@ return [
         ],
 
         'default' => [
+            'scheme' => env('REDIS_USE_SSL', false) ? 'tls' : 'tcp',
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_DB', '0'),
+            'tls' => env('REDIS_USE_SSL', false) ? ['verify_peer' => false] : null,
         ],
 
         'cache' => [
+            'scheme' => env('REDIS_USE_SSL', false) ? 'tls' : 'tcp',
             'url' => env('REDIS_URL'),
             'host' => env('REDIS_HOST', '127.0.0.1'),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
+            'tls' => env('REDIS_USE_SSL', false) ? ['verify_peer' => false] : null,
         ],
 
     ],
