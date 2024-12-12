@@ -13,15 +13,15 @@
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "predis/predis": "^2.3"
+        "predis/predis": "^2.3",
+        "laravel/horizon": "^5.29",
+        "laravel/telescope": "^5.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.2",
         "fakerphp/faker": "^1.23",
-        "laravel/horizon": "^5.29",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.26",
-        "laravel/telescope": "^5.2",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
         "pestphp/pest": "^3.7",
