@@ -31,7 +31,7 @@ class FlickrService
             'api_key' => $this->apiKey,
             'format' => 'json',
             'nojsoncallback' => 1,
-            'extras' => 'url_m,date_taken',
+            'extras' => 'url_m,tags,owner_name,date_taken,date_upload,views,description',
             'tags' => $preparedTags,
             'page' => $page,
             'per_page' => $perPage,
