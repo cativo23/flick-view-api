@@ -35,8 +35,8 @@ return [
         ],
     ],
 
-    'flckr' => [
-        'key' => env('FLICKR_API_KEY'),
-        'url' => env('FLICKR_API_URL'),
+    'flickr' => [
+        'key' => env('FLICKR_API_KEY', null),
+        'url' => env('FLICKR_API_URL', null),
     ],
 ];
