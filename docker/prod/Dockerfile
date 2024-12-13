@@ -1,6 +1,8 @@
 # Build stage: Install dependencies and prepare Laravel
 FROM php:8.3-fpm
 
+ARG NODE_VERSION=22
+
 # Set the working directory
 WORKDIR /var/www/html
 
@@ -26,13 +28,18 @@ RUN apt-get update && apt-get install -y \
     bcmath \
     opcache \
     pcntl \
-    && docker-php-ext-enable opcache
+    && docker-php-ext-enable opcache \
+    && curl -sLS https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - \
+        && apt-get install -y nodejs \
+        && npm install -g npm \
+        && apt-get -y autoremove \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install Composer (run as root)
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy Laravel project files to the container
-# Copy code to /var/www
 COPY --chown=www-data:www-data . /var/www/html
 
 RUN chmod -R ug+w /var/www/html/storage
@@ -62,6 +69,10 @@ RUN chmod +x /usr/local/bin/start-container.sh
 
 # Set permissions for runtime directories (as root)
 RUN chown -R www-data:www-data /var/www/html
+
+# Build the frontend assets
+RUN npm install
+RUN npm run build
 
 # Expose port 80 for Nginx
 EXPOSE 80
