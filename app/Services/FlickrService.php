@@ -47,4 +47,60 @@ class FlickrService
 
         return $response->json();
     }
+
+    /**
+     * Consumes the Flickr API to fetch photo info
+     *
+     * @param  string[]|null  $tags
+     */
+    public function fetchPhoto(int $photo_id)
+    {
+        
+        $method = 'flickr.photos.getInfo';
+        $params = [
+            'method' => $method,
+            'api_key' => $this->apiKey,
+            'photo_id' => $photo_id,
+            'format' => 'json',
+            'nojsoncallback' => 1,
+        ];
+
+        $response = Http::get($this->apiUrl, $params);
+
+        $status = $response->json('stat');
+
+        if ($status === 'fail') {
+            return null;
+        }
+
+        return $response->json();
+    }
+
+    /**
+     * Consumes the Flickr API to fetch photo comments
+     *
+     * @param  string[]|null  $tags
+     */
+    public function fetchPhotoComments(int $photo_id)
+    {
+        
+        $method = 'flickr.photos.comments.getList';
+        $params = [
+            'method' => $method,
+            'api_key' => $this->apiKey,
+            'photo_id' => $photo_id,
+            'format' => 'json',
+            'nojsoncallback' => 1,
+        ];
+
+        $response = Http::get($this->apiUrl, $params);
+
+        $status = $response->json('stat');
+
+        if ($status === 'fail') {
+            return null;
+        }
+
+        return $response->json();
+    }
 }

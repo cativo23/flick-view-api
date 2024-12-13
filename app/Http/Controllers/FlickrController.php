@@ -81,4 +81,32 @@ class FlickrController extends Controller
     {
         $this->metricsService->saveSearchTags($tags);
     }
+
+    public function getPhoto(Request $request): JsonResponse
+    {
+
+        $photo = $this->flickrService->fetchPhoto($request->photo_id);
+
+        if ($photo === null) {
+            return response()->json([
+                'message' => 'Error al obtener información de la foto en Flickr.',
+            ], 500);
+        }
+
+        $comments = $this->flickrService->fetchPhotoComments($request->photo_id);
+
+        if ($comments === null) {
+            return response()->json([
+                'message' => 'Error al obtener comentarios de la foto en Flickr.',
+            ], 500);
+        }
+
+        $photo['photo']['comments'] = $comments['comments']['comment'] ?? null;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $photo,
+        ]);
+
+    }    
 }

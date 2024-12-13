@@ -10,3 +10,4 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::get('/feed', [FlickrController::class, 'getFeed'])->middleware([LogResponseTime::class]);
+Route::get('/photos/{photo_id}', [FlickrController::class, 'getPhoto'])->middleware([LogResponseTime::class]);
