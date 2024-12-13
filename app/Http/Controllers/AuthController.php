@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -13,7 +14,7 @@ final class AuthController extends Controller
         request()->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'device_name' => 'required'
+            'device_name' => 'required',
         ]);
 
         $user = User::where('email', request()->email)->first();
@@ -25,7 +26,7 @@ final class AuthController extends Controller
         }
 
         return response()->json([
-            'token' => $user->createToken(request()->device_name)->plainTextToken
+            'token' => $user->createToken(request()->device_name)->plainTextToken,
         ]);
     }
 
@@ -34,7 +35,7 @@ final class AuthController extends Controller
         auth()->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Logged out'
+            'message' => 'Logged out',
         ]);
     }
 }
