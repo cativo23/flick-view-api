@@ -108,5 +108,5 @@ class FlickrController extends Controller
             'data' => $photo,
         ]);
 
-    }    
+    }
 }

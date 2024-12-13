@@ -55,7 +55,7 @@ class FlickrService
      */
     public function fetchPhoto(int $photo_id)
     {
-        
+
         $method = 'flickr.photos.getInfo';
         $params = [
             'method' => $method,
@@ -83,7 +83,7 @@ class FlickrService
      */
     public function fetchPhotoComments(int $photo_id)
     {
-        
+
         $method = 'flickr.photos.comments.getList';
         $params = [
             'method' => $method,
