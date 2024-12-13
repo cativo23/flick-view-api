@@ -21,13 +21,13 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         Telescope::tag(function (IncomingEntry $entry) {
             try {
                 if ($entry->type === 'request') {
-                    return ['status:' . $entry->content['response_status'], $entry->type];
+                    return ['status:'.$entry->content['response_status'], $entry->type];
                 }
                 if ($entry->type === 'client_request') {
                     return [
                         $entry->type,
-                        'response_status:' . $entry->content['response_status'] ?? 'unknown',
-                        'uri:' . $entry->content['uri'] ?? 'unknown'
+                        'response_status:'.$entry->content['response_status'] ?? 'unknown',
+                        'uri:'.$entry->content['uri'] ?? 'unknown',
                     ];
                 }
             } catch (Exception $e) {
