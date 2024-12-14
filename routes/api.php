@@ -9,4 +9,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/feed', [FlickrController::class, 'getFeed'])->middleware([LogResponseTime::class]);
+Route::middleware([LogResponseTime::class])->group(function () {
+    Route::get('/feed', [FlickrController::class, 'getFeed']);
+    Route::get('/photo/{photo_id}', [FlickrController::class, 'getPhoto']);
+});

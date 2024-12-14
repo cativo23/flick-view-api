@@ -15,11 +15,14 @@ class FlickrController extends Controller
         protected readonly MetricsService $metricsService
     ) {}
 
+    /**
+     * Get the Flickr feed
+     */
     public function getFeed(Request $request): JsonResponse
     {
-        $page = $request->query('page', 1);          // Página actual (por defecto 1)
-        $perPage = $request->query('per_page', 10); // Elementos por página (por defecto 10)
-        $dirtyTags = $request->query('tags', '');      // Tags opcionales
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 12);
+        $dirtyTags = $request->query('tags', '');
 
         // Clean up tags
         $tags = $this->cleanTags($dirtyTags);
@@ -80,5 +83,34 @@ class FlickrController extends Controller
     private function saveSearchedTags(array $tags): void
     {
         $this->metricsService->saveSearchTags($tags);
+    }
+
+    public function getPhoto(Request $request): JsonResponse
+    {
+        $photoId = $request->input('photo_id');
+
+        $photo = $this->flickrService->fetchPhoto($photoId);
+
+        if ($photo === null) {
+            return response()->json([
+                'message' => 'Error al obtener información de la foto en Flickr.',
+            ], 500);
+        }
+
+        $comments = $this->flickrService->fetchPhotoComments($request->photo_id);
+
+        if ($comments === null) {
+            return response()->json([
+                'message' => 'Error al obtener comentarios de la foto en Flickr.',
+            ], 500);
+        }
+
+        $photo['photo']['comments'] = $comments['comments']['comment'] ?? null;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $photo,
+        ]);
+
     }
 }
