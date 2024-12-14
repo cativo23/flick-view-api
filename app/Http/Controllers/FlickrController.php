@@ -15,11 +15,14 @@ class FlickrController extends Controller
         protected readonly MetricsService $metricsService
     ) {}
 
+    /**
+     * Get the Flickr feed
+     */
     public function getFeed(Request $request): JsonResponse
     {
-        $page = $request->query('page', 1);          // Página actual (por defecto 1)
-        $perPage = $request->query('per_page', 10); // Elementos por página (por defecto 10)
-        $dirtyTags = $request->query('tags', '');      // Tags opcionales
+        $page = $request->query('page', 1);
+        $perPage = $request->query('per_page', 12);
+        $dirtyTags = $request->query('tags', '');
 
         // Clean up tags
         $tags = $this->cleanTags($dirtyTags);
@@ -84,8 +87,9 @@ class FlickrController extends Controller
 
     public function getPhoto(Request $request): JsonResponse
     {
+        $photoId = $request->input('photo_id');
 
-        $photo = $this->flickrService->fetchPhoto($request->photo_id);
+        $photo = $this->flickrService->fetchPhoto($photoId);
 
         if ($photo === null) {
             return response()->json([
