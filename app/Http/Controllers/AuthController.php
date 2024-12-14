@@ -9,6 +9,9 @@ use Illuminate\Validation\ValidationException;
 
 final class AuthController extends Controller
 {
+    /**
+     * Log the user in.
+     */
     final public function login(): JsonResponse
     {
         request()->validate([
@@ -30,6 +33,9 @@ final class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Log the user out.
+     */
     final public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
