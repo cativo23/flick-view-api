@@ -2,13 +2,15 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FlickrService
 {
-    protected $apiUrl;
+    protected string $apiUrl;
 
-    protected $apiKey;
+    protected string $apiKey;
 
     public function __construct()
     {
@@ -21,10 +23,9 @@ class FlickrService
      *
      * @param  string[]|null  $tags
      */
-    public function fetchFeed(int $page = 1, int $perPage = 10, ?array $tags = null)
+    public function fetchFeed(int $page = 1, int $perPage = 10, ?array $tags = null): ?array
     {
         $preparedTags = $tags ? implode(',', $tags) : null;
-
         $method = $preparedTags ? 'flickr.photos.search' : 'flickr.photos.getRecent';
         $params = [
             'method' => $method,
@@ -37,14 +38,82 @@ class FlickrService
             'per_page' => $perPage,
         ];
 
-        $response = Http::get($this->apiUrl, $params);
+        try {
+            $response = Http::get($this->apiUrl, $params);
+            $response->throw();
+            $status = $response->json('stat');
 
-        $status = $response->json('stat');
+            if ($status === 'fail') {
+                return null;
+            }
 
-        if ($status === 'fail') {
+            return $response->json();
+        } catch (RequestException $e) {
+            Log::error('Error fetching Flickr feed', ['exception' => $e]);
+
             return null;
         }
+    }
 
-        return $response->json();
+    /**
+     * Consumes the Flickr API to fetch photo info.
+     */
+    public function fetchPhoto(int $photo_id): ?array
+    {
+        $params = [
+            'method' => 'flickr.photos.getInfo',
+            'api_key' => $this->apiKey,
+            'photo_id' => $photo_id,
+            'format' => 'json',
+            'nojsoncallback' => 1,
+        ];
+
+        try {
+            $response = Http::get($this->apiUrl, $params);
+            $response->throw();
+            $status = $response->json('stat');
+
+            if ($status === 'fail') {
+                return null;
+            }
+
+            return $response->json();
+        } catch (RequestException $e) {
+            Log::error('Error fetching Flickr photo', ['exception' => $e]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Consumes the Flickr API to fetch photo comments
+     *
+     * @return array|null
+     */
+    public function fetchPhotoComments(int $photo_id)
+    {
+        $params = [
+            'method' => 'flickr.photos.comments.getList',
+            'api_key' => $this->apiKey,
+            'photo_id' => $photo_id,
+            'format' => 'json',
+            'nojsoncallback' => 1,
+        ];
+
+        try {
+            $response = Http::get($this->apiUrl, $params);
+            $response->throw();
+            $status = $response->json('stat');
+
+            if ($status === 'fail') {
+                return null;
+            }
+
+            return $response->json();
+        } catch (RequestException $e) {
+            Log::error('Error fetching Flickr photo comments', ['exception' => $e]);
+
+            return null;
+        }
     }
 }
