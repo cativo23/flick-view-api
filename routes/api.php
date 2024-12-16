@@ -17,5 +17,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware([LogResponseTime::class])->group(function () {
     Route::get('/feed', [FlickrController::class, 'getFeed']);
-    Route::get('/photo/{photo_id}', [FlickrController::class, 'getPhoto']);
+    Route::prefix('/photo/{photo_id}')->group( function (){
+        Route::get('/', [FlickrController::class, 'getPhoto']);
+        Route::get('/comments', [FlickrController::class, 'getComments']);
+    });
 });

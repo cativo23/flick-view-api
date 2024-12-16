@@ -85,10 +85,8 @@ class FlickrController extends Controller
         $this->metricsService->saveSearchTags($tags);
     }
 
-    public function getPhoto(Request $request): JsonResponse
+    public function getPhoto(string $photoId): JsonResponse
     {
-        $photoId = $request->input('photo_id');
-
         $photo = $this->flickrService->fetchPhoto($photoId);
 
         if ($photo === null) {
@@ -97,7 +95,15 @@ class FlickrController extends Controller
             ], 500);
         }
 
-        $comments = $this->flickrService->fetchPhotoComments($request->photo_id);
+        return response()->json([
+            'status' => 'success',
+            'data' => $photo,
+        ]);
+    }
+
+    public function getComments(string $photoId): JsonResponse
+    {
+        $comments = $this->flickrService->fetchPhotoComments($photoId);
 
         if ($comments === null) {
             return response()->json([
@@ -105,12 +111,9 @@ class FlickrController extends Controller
             ], 500);
         }
 
-        $photo['photo']['comments'] = $comments['comments']['comment'] ?? null;
-
         return response()->json([
             'status' => 'success',
-            'data' => $photo,
+            'data' => $comments,
         ]);
-
     }
 }

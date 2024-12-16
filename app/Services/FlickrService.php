@@ -68,6 +68,14 @@ class FlickrService
             'nojsoncallback' => 1,
         ];
 
+        $imageParams = [
+            'method' => 'flickr.photos.getSizes',
+            'api_key' => $this->apiKey,
+            'photo_id' => $photo_id,
+            'format' => 'json',
+            'nojsoncallback' => 1,
+        ];
+
         try {
             $response = Http::get($this->apiUrl, $params);
             $response->throw();
@@ -77,10 +85,21 @@ class FlickrService
                 return null;
             }
 
-            return $response->json();
+            $response = $response->json('photo');
+
+            // Inject images into the response
+
+            $imageResponse = Http::get($this->apiUrl, $imageParams);
+            $imageResponse->throw();
+            $imageStatus = $imageResponse->json('stat');
+
+            if ($imageStatus === 'fail') {
+                return null;
+            }
+
+            return array_merge($response, ['images' => $imageResponse->json('sizes.size')]);
         } catch (RequestException $e) {
             Log::error('Error fetching Flickr photo', ['exception' => $e]);
-
             return null;
         }
     }
@@ -109,7 +128,7 @@ class FlickrService
                 return null;
             }
 
-            return $response->json();
+            return $response->json('comments');
         } catch (RequestException $e) {
             Log::error('Error fetching Flickr photo comments', ['exception' => $e]);
 
