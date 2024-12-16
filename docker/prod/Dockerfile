@@ -1,6 +1,8 @@
 # Build stage: Install dependencies and prepare Laravel
 FROM php:8.3-fpm
 
+ARG NODE_VERSION=22
+
 # Set the working directory
 WORKDIR /var/www/html
 
@@ -26,13 +28,18 @@ RUN apt-get update && apt-get install -y \
     bcmath \
     opcache \
     pcntl \
-    && docker-php-ext-enable opcache
+    && docker-php-ext-enable opcache \
+    && curl -sLS https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - \
+        && apt-get install -y nodejs \
+        && npm install -g npm \
+        && apt-get -y autoremove \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install Composer (run as root)
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy Laravel project files to the container
-# Copy code to /var/www
 COPY --chown=www-data:www-data . /var/www/html
 
 RUN chmod -R ug+w /var/www/html/storage
@@ -46,11 +53,7 @@ RUN chown -R www-data:www-data /var/www/html \
 USER www-data
 
 # Optimize Laravel for production
-RUN composer install --no-dev --optimize-autoloader \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan event:cache
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 USER root
 
@@ -60,11 +63,19 @@ COPY docker/prod/default.conf /etc/nginx/sites-enabled/default
 # Copy Supervisor configuration
 COPY docker/prod/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Copy start.sh script
+COPY docker/prod/start-container.sh /usr/local/bin/start-container.sh
+RUN chmod +x /usr/local/bin/start-container.sh
+
 # Set permissions for runtime directories (as root)
 RUN chown -R www-data:www-data /var/www/html
+
+# Build the frontend assets
+RUN npm install
+RUN npm run build
 
 # Expose port 80 for Nginx
 EXPOSE 80
 
-# Start Supervisor, which will manage Nginx and PHP-FPM
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Set the entry point to the start.sh script
+CMD ["/usr/local/bin/start-container.sh"]

@@ -122,4 +122,14 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Users
+    |--------------------------------------------------------------------------
+    |
+    | This is the list of user's email that will be able to access Dashboard, Telescope and Horizon.
+    |
+    */
+    'admin_users' => explode(',', env('ADMIN_USERS', '')),
 ];
