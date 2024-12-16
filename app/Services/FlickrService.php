@@ -100,6 +100,7 @@ class FlickrService
             return array_merge($response, ['images' => $imageResponse->json('sizes.size')]);
         } catch (RequestException $e) {
             Log::error('Error fetching Flickr photo', ['exception' => $e]);
+
             return null;
         }
     }
