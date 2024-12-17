@@ -63,6 +63,11 @@ COPY docker/prod/default.conf /etc/nginx/sites-enabled/default
 # Copy Supervisor configuration
 COPY docker/prod/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+#Cron jobs
+COPY docker/prod/crontab /etc/cron.d/scheduler
+RUN  chmod 0644 /etc/cron.d/scheduler
+RUN  crontab /etc/cron.d/scheduler
+
 # Copy start.sh script
 COPY docker/prod/start-container.sh /usr/local/bin/start-container.sh
 RUN chmod +x /usr/local/bin/start-container.sh
