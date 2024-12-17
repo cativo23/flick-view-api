@@ -10,4 +10,3 @@ Artisan::command('inspire', function () {
 Schedule::command('horizon:snapshot')->everyFiveMinutes();
 
 Schedule::command('telescope:prune --hours=48')->daily();
-
