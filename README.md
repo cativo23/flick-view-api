@@ -1,38 +1,31 @@
-# bluemedical/flick-view-api
+# ⚠️ Proyecto Archivado
 
+**API del Proyecto Flick View (Hackaton) - Archivado junto con el frontend**
 
-## Local Development
+---
 
-This project uses
-[Laravel Sail](https://laravel.com/docs/sail) to manage
-its local development stack. For more detailed usage instructions take a look at
-the [official documentation](https://laravel.com/docs/sail).
+## Estado del Proyecto
 
-### Links
+Este repositorio está **archivado** y ya no recibe mantenimiento activo.
 
-- **Your Application** http://localhost
-- **Preview Emails via Mailpit** http://localhost:8025
-- **Laravel Telescope** http://localhost/telescope
-- **Laravel Horizon** http://localhost/horizon
+### ¿Por qué se archivó?
 
-### Start the development server
+- API del proyecto flick-view desarrollado para un hackaton
+- El proyecto no continuó después del evento
+- Se archiva junto con el frontend (flick-view)
 
-```shell
-./vendor/bin/sail up
-```
+---
 
-You can also use the `-d` option, to start the server in
-the background if you do not care about the logs or still want to use your
-terminal for other things.
+## Información Original
 
-### Build frontend assets
+Backend API para Flick View desarrollado con Laravel Sail.
 
-```shell
-./vendor/bin/sail npm watch
-```
+## Tecnologías
 
-### Run Tests
+- Laravel
+- PHP
+- Docker
 
-```shell
-./vendor/bin/sail test
-```
+---
+
+**Nota:** Este repositorio se mantiene como referencia histórica del proyecto.
