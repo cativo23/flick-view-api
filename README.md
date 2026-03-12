@@ -1,26 +1,26 @@
-# ⚠️ Proyecto Archivado
+# ⚠️ Archived Project
 
-**API del Proyecto Flick View (Hackaton) - Archivado junto con el frontend**
-
----
-
-## Estado del Proyecto
-
-Este repositorio está **archivado** y ya no recibe mantenimiento activo.
-
-### ¿Por qué se archivó?
-
-- API del proyecto flick-view desarrollado para un hackaton
-- El proyecto no continuó después del evento
-- Se archiva junto con el frontend (flick-view)
+**Flick View Project API (Hackathon) - Archived with Frontend**
 
 ---
 
-## Información Original
+## Project Status
 
-Backend API para Flick View desarrollado con Laravel Sail.
+This repository is **archived** and is no longer actively maintained.
 
-## Tecnologías
+### Why was this archived?
+
+- API for the flick-view project developed for a hackathon
+- Project did not continue after the event
+- Archived together with the frontend (flick-view)
+
+---
+
+## Original Information
+
+Backend API for Flick View developed with Laravel Sail.
+
+## Technologies
 
 - Laravel
 - PHP
@@ -28,4 +28,4 @@ Backend API para Flick View desarrollado con Laravel Sail.
 
 ---
 
-**Nota:** Este repositorio se mantiene como referencia histórica del proyecto.
+**Note:** This repository is kept as historical reference of the project.
